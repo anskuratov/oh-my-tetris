@@ -1,2 +1,1 @@
-# oh-my-tetris
-Tetris game for real connoisseurs!
+# Oh my tetris!
