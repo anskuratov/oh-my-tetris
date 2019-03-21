@@ -4,23 +4,19 @@ namespace Assets.Gameplay
 {
     public class PlayingFieldGenerator : MonoBehaviour
     {
-        [SerializeField]
-        private GameObject _cellPrefab;
-
-        [SerializeField]
-        private GameObject _playingFieldPrefab;
-
         public GameObject Generate(
             int xDimension,
-            int yDimension)
+            int yDimension,
+            GameObject playingFieldPrefab,
+            GameObject cellPrefab)
         {
             var playingFieldModel = new PlayingFieldModel(xDimension, yDimension);
 
-            var newPlayingField = Instantiate(_playingFieldPrefab);
+            var newPlayingField = Instantiate(playingFieldPrefab);
 
             foreach (var cell in playingFieldModel.CellsArray)
             {
-                var newCell = Instantiate(_cellPrefab, newPlayingField.transform);
+                var newCell = Instantiate(cellPrefab, newPlayingField.transform);
                 newCell.GetComponent<CellController>().InitializeModel(cell);
             }
 
