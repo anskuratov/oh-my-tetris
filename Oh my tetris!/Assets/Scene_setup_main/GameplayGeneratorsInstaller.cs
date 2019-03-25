@@ -1,11 +1,14 @@
 using Zenject;
 using Assets.Gameplay;
 
-public class GameplayGeneratorsInstaller : MonoInstaller<GameplayGeneratorsInstaller>
+namespace Assets.Installers
 {
-    public override void InstallBindings()
+    public class GameplayGeneratorsInstaller : MonoInstaller<GameplayGeneratorsInstaller>
     {
-        Container.BindInstance(
-            FindObjectOfType<PlayingFieldGenerator>()).AsSingle();
+        public override void InstallBindings()
+        {
+            Container.BindInstance(
+                FindObjectOfType<PlayingFieldGenerator>()).AsSingle();
+        }
     }
 }

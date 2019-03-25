@@ -1,13 +1,17 @@
 using Zenject;
+using Assets.Utils;
 
-public class UtilsInstaller : MonoInstaller<UtilsInstaller>
+namespace Assets.Installers
 {
-    public override void InstallBindings()
+    public class UtilsInstaller : MonoInstaller<UtilsInstaller>
     {
-        Container.BindInstance(
-            FindObjectOfType<SceneLoaderBehaviour>()).AsSingle();
+        public override void InstallBindings()
+        {
+            Container.BindInstance(
+                FindObjectOfType<SceneLoaderBehaviour>()).AsSingle();
 
-        Container.BindInstance(
-            FindObjectOfType<AnimationsLoaderBehaviour>()).AsSingle();
+            Container.BindInstance(
+                FindObjectOfType<AnimationsLoaderBehaviour>()).AsSingle();
+        }
     }
 }

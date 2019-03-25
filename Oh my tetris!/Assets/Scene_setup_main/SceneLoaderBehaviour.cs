@@ -4,72 +4,76 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneLoaderBehaviour : MonoBehaviour
+namespace Assets.Utils
 {
-    private const float millisecondsToWait = 1000f;
-
-    [SerializeField]
-    private AnimationsLoaderBehaviour _animationsLoader;
-
-    private List<GameScene> _loadedScenes;
-
-    private void Awake()
+    public class SceneLoaderBehaviour : MonoBehaviour
     {
-        _loadedScenes = new List<GameScene>();
-    }
+        private const float millisecondsToWait = 1000f;
 
-    public void LoadScene(GameScene sceneToLoad, bool unloadOtherScenes = false) =>
-        LoadSceneAsync(sceneToLoad, unloadOtherScenes);
+        [SerializeField]
+        private AnimationsLoaderBehaviour _animationsLoader;
 
-    private async Task LoadSceneAsync(GameScene sceneToLoad, bool unloadOtherScenes)
-    {
-        _animationsLoader.StartLoading();
+        private List<GameScene> _loadedScenes;
 
-        var loadingTask = LoadSceneAsync(sceneToLoad);
-        while (loadingTask.IsCompleted == false)
-            await Task.Delay(TimeSpan.FromMilliseconds(millisecondsToWait));
-
-        if (unloadOtherScenes && _loadedScenes.Count != 0)
+        private void Awake()
         {
-            loadingTask = UnloadScenesAsync();
+            _loadedScenes = new List<GameScene>();
+        }
+
+        public void LoadScene(GameScene sceneToLoad, bool unloadOtherScenes = false) =>
+            LoadSceneAsync(sceneToLoad, unloadOtherScenes);
+
+        private async Task LoadSceneAsync(GameScene sceneToLoad, bool unloadOtherScenes)
+        {
+            _animationsLoader.StartLoading();
+
+            var loadingTask = LoadSceneAsync(sceneToLoad);
             while (loadingTask.IsCompleted == false)
+                await Task.Delay(TimeSpan.FromMilliseconds(millisecondsToWait));
+
+            if (unloadOtherScenes && _loadedScenes.Count != 0)
+            {
+                loadingTask = UnloadScenesAsync();
+                while (loadingTask.IsCompleted == false)
+                    await Task.Delay(TimeSpan.FromMilliseconds(millisecondsToWait));
+            }
+
+            SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex((int)sceneToLoad));
+
+            _loadedScenes.Add(sceneToLoad);
+
+            _animationsLoader.StopLoading();
+        }
+
+        private async Task UnloadScenesAsync()
+        {
+            foreach (var scene in _loadedScenes)
+                await UnloadSceneAsync(scene);
+
+            _loadedScenes.Clear();
+        }
+
+        private async Task LoadSceneAsync(GameScene sceneToLoad)
+        {
+            var loadingOperation = SceneManager.LoadSceneAsync((int)sceneToLoad, LoadSceneMode.Additive);
+
+            while (loadingOperation.isDone == false)
                 await Task.Delay(TimeSpan.FromMilliseconds(millisecondsToWait));
         }
 
-        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex((int)sceneToLoad));
+        private async Task UnloadSceneAsync(GameScene sceneToUnload)
+        {
+            var unloadingOperation = SceneManager.UnloadSceneAsync((int)sceneToUnload);
 
-        _loadedScenes.Add(sceneToLoad);
-
-        _animationsLoader.StopLoading();
+            while (unloadingOperation.isDone == false)
+                await Task.Delay(TimeSpan.FromMilliseconds(millisecondsToWait));
+        }
     }
 
-    private async Task UnloadScenesAsync()
+    public enum GameScene
     {
-        foreach (var scene in _loadedScenes)
-            await UnloadSceneAsync(scene);
+        level_main_menu,
 
-        _loadedScenes.Clear();
+        level_game
     }
-
-    private async Task LoadSceneAsync(GameScene sceneToLoad)
-    {
-        var loadingOperation = SceneManager.LoadSceneAsync((int)sceneToLoad, LoadSceneMode.Additive);
-
-        while (loadingOperation.isDone == false)
-            await Task.Delay(TimeSpan.FromMilliseconds(millisecondsToWait));
-    }
-
-    private async Task UnloadSceneAsync(GameScene sceneToUnload)
-    {
-        var unloadingOperation = SceneManager.UnloadSceneAsync((int)sceneToUnload);
-
-        while (unloadingOperation.isDone == false)
-            await Task.Delay(TimeSpan.FromMilliseconds(millisecondsToWait));
-    }
-}
-
-public enum GameScene
-{
-    level_main_menu,
-    level_game
 }
