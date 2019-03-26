@@ -18,7 +18,7 @@ namespace Assets.Gameplay
             for (int i = 0; i < CellsArray.GetLength(0); ++i)
                 for (int j = 0; j < CellsArray.GetLength(1); ++j)
                 {
-                    CellsArray[i, j] = new CellModel(new Vector2(i, j));
+                    CellsArray[i, j] = new CellModel(new Vector2(i + 1, j + 1));
                 }
         }
     }

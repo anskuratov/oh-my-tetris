@@ -15,6 +15,9 @@ namespace Assets.Gameplay
         [SerializeField]
         private GameObject _cellPrefab;
 
+        [SerializeField]
+        private GameObject _borderPrefab;
+
         private PlayingFieldController _playingFieldController;
         private GameModel _gameModel;
 
@@ -49,7 +52,10 @@ namespace Assets.Gameplay
                 _gameModel.PlayingFieldWidth,
                 _gameModel.PlayingFieldHeight,
                 _playingFieldPrefab,
-                _cellPrefab);
+                _cellPrefab,
+                _borderPrefab);
+
+            playingField.transform.SetParent(_playingFieldParent);
         }
     }
 }

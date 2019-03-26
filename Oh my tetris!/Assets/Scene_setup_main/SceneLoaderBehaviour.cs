@@ -20,7 +20,7 @@ namespace Assets.Utils
             _loadedScenes = new List<GameScene>();
         }
 
-        public void LoadScene(GameScene sceneToLoad, bool unloadOtherScenes = false) =>
+        public void LoadScene(GameScene sceneToLoad, bool unloadOtherScenes = true) =>
             LoadSceneAsync(sceneToLoad, unloadOtherScenes);
 
         private async Task LoadSceneAsync(GameScene sceneToLoad, bool unloadOtherScenes)
